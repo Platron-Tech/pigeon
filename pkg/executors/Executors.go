@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func GetRequest(taskId string, continuous bool, url string, header map[string]interface{}) {
+func GetRequest(taskId string, url string, header map[string]interface{}) {
 	httpClient := client.New(url)
 	req, err := httpClient.Get("")
 
@@ -21,10 +21,10 @@ func GetRequest(taskId string, continuous bool, url string, header map[string]in
 		println(err)
 	}
 
-	doRequest(taskId, continuous, httpClient, req)
+	doRequest(taskId, httpClient, req)
 }
 
-func PostRequest(taskId string, continuous bool, url string, body map[string]interface{}, header map[string]interface{}) {
+func PostRequest(taskId string, url string, body map[string]interface{}, header map[string]interface{}) {
 	httpClient := client.New(url)
 	req, err := httpClient.PostWith("", body)
 
@@ -37,17 +37,15 @@ func PostRequest(taskId string, continuous bool, url string, body map[string]int
 		println(err)
 	}
 
-	doRequest(taskId, continuous, httpClient, req)
+	doRequest(taskId, httpClient, req)
 }
 
-func doRequest(taskId string, continuous bool, httpClient client.IHttpClient, req *http.Request) {
+func doRequest(taskId string, httpClient client.IHttpClient, req *http.Request) {
 	if db.CheckExecutionAvailability(taskId) {
 		resp := httpClient.Do(req)
 		if resp.IsSuccess {
-			fmt.Println("success for " + taskId + " - send at : " + time.Now().String())
-			if !continuous {
-				db.DecreaseReamingCount(taskId)
-			}
+			fmt.Println("success for " + taskId + " - send at : " + time.Now().String() + " ----> " + req.URL.String())
+			db.IncreaseFireCount(taskId)
 		} else {
 			fmt.Println(resp.Error)
 		}

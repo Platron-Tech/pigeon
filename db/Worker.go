@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	. "pigeon/model"
+	"strconv"
+	"time"
 )
 
 func Save(taskId string, req SchedulerRequest) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sql.Open("postgres", getSqlInfo())
 	if err != nil {
 		panic(err)
 	}
@@ -23,17 +23,26 @@ func Save(taskId string, req SchedulerRequest) {
 	h, err := json.Marshal(req.Execution.Header)
 	hs := string(h)
 
-	saveQuery := "INSERT INTO tasks(uuid, start_at, target_url, interval_time, interval_type, send_at, exec_type, exec_body, exec_header, exec_limit, immediately, continuous, cancelled, remain_count) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)"
-	_, err = db.Exec(saveQuery, taskId, req.StartAt.ConvertToTime(), req.Execution.TargetUrl, req.Interval, req.IntervalType, req.SendAt, req.Execution.Type, ebs, hs, req.Limit, req.Immediately, req.Continuous, false, req.Limit)
+	if req.SendAt == "" {
+		hour := strconv.Itoa(time.Now().Hour())
+		minute := strconv.Itoa(time.Now().Minute())
+		req.SendAt = hour + ":" + minute
+	}
+
+	startAt := time.Now()
+	if req.StartAt != (SchedulerStart{}) {
+		startAt = req.StartAt.ConvertToTime()
+	}
+
+	saveQuery := "INSERT INTO tasks(uuid, start_at, target_url, interval_time, interval_type, send_at, exec_type, exec_body, exec_header, exec_limit, immediately, continuous, cancelled, fire_count) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)"
+	_, err = db.Exec(saveQuery, taskId, startAt, req.Execution.TargetUrl, req.Interval, req.IntervalType, req.SendAt, req.Execution.Type, ebs, hs, req.Limit, req.Immediately, req.Continuous, false, 0)
 	if err != nil {
 		print(err)
 	}
 }
 
 func GetById(taskId string) (response TaskDetail) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sql.Open("postgres", getSqlInfo())
 	if err != nil {
 		panic(err)
 	}
@@ -47,7 +56,7 @@ func GetById(taskId string) (response TaskDetail) {
 
 	err = db.QueryRow(findQuery, taskId).Scan(&detail.Id, &detail.TaskId, &detail.StartAt, &detail.Execution.TargetUrl,
 		&detail.Interval, &detail.IntervalType, &detail.SendAt, &detail.Execution.Type, &execBody, &execHeader,
-		&detail.Limit, &detail.Immediately, &detail.Continuous, &detail.Cancelled, &detail.RemainCount)
+		&detail.Limit, &detail.Immediately, &detail.Continuous, &detail.Cancelled, &detail.FireCount)
 
 	// convert marshalled JSON field
 	var eb map[string]interface{}
@@ -69,9 +78,7 @@ func GetById(taskId string) (response TaskDetail) {
 }
 
 func CancelTask(taskId string) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sql.Open("postgres", getSqlInfo())
 	if err != nil {
 		panic(err)
 	}
@@ -86,9 +93,7 @@ func CancelTask(taskId string) {
 }
 
 func GetActives() (response []TaskSummary) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sql.Open("postgres", getSqlInfo())
 	if err != nil {
 		panic(err)
 	}
@@ -114,15 +119,13 @@ func GetActives() (response []TaskSummary) {
 }
 
 func GetDetailedJobs() (response []TaskDetail) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sql.Open("postgres", getSqlInfo())
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
 
-	findQuery := "SELECT * FROM tasks WHERE cancelled = false OR remain_count > 0"
+	findQuery := "SELECT * FROM tasks WHERE cancelled = false"
 
 	rows, err := db.Query(findQuery)
 	defer rows.Close()
@@ -134,7 +137,7 @@ func GetDetailedJobs() (response []TaskDetail) {
 
 		err = rows.Scan(&detail.Id, &detail.TaskId, &detail.StartAt, &detail.Execution.TargetUrl, &detail.Interval,
 			&detail.IntervalType, &detail.SendAt, &detail.Execution.Type, &execBody, &execHeader, &detail.Limit,
-			&detail.Immediately, detail.Continuous, &detail.Cancelled, &detail.RemainCount)
+			&detail.Immediately, &detail.Continuous, &detail.Cancelled, &detail.FireCount)
 
 		// convert marshalled JSON field
 		var eb map[string]interface{}
@@ -154,16 +157,14 @@ func GetDetailedJobs() (response []TaskDetail) {
 	return response
 }
 
-func DecreaseReamingCount(taskId string) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+func IncreaseFireCount(taskId string) {
+	db, err := sql.Open("postgres", getSqlInfo())
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
 
-	query := "UPDATE tasks SET remain_count = remain_count - 1 WHERE uuid = $1"
+	query := "UPDATE tasks SET fire_count = fire_count + 1 WHERE uuid = $1"
 	_, err = db.Exec(query, taskId)
 	if err != nil {
 		println("an error occurred while remain_count update operation")
@@ -173,9 +174,9 @@ func DecreaseReamingCount(taskId string) {
 func CheckExecutionAvailability(taskId string) bool {
 	task := GetById(taskId)
 
-	if task.Limit == 0 {
+	if task.Continuous {
 		return true
 	}
 
-	return task.RemainCount > 0
+	return task.Limit-task.FireCount > 0
 }

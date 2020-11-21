@@ -44,7 +44,7 @@ type TaskDetail struct {
 	Immediately  bool
 	Continuous   bool
 	Cancelled    bool
-	RemainCount  int
+	FireCount    int
 }
 
 type TaskSummary struct {
