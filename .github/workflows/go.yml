@@ -34,3 +34,6 @@ jobs:
 
     - name: Test
       run: go test -v .
+
+    - name: Docker image
+      run: docker build -t pigeon .

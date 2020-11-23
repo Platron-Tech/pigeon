@@ -5,7 +5,7 @@ Docker image build :\
 ```docker build -t pigeon .```
 
 Docker run :\
-```docker run -p 4040:4040 pigeon```
+``` docker run --name pigeon-scheduler -p 4040:4040 --env-file ./sample_env.list pigeon```
 
 ### Usage
 

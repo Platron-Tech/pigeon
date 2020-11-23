@@ -20,16 +20,17 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.CORS())
 
 	//e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 	//	Format: "method=${method}, uri=${uri}, status=${status}\n",
 	//}))
 
 	// Routes
-	e.POST("/schedule", handlers.AttachNewTask)
-	e.GET("/schedule/:id", handlers.GetTaskDetail)
-	e.GET("/schedule", handlers.GetTasks)
-	e.DELETE("/schedule/:id", handlers.CancelTask)
+	e.POST("/scheduler", handlers.AttachNewTask)
+	e.GET("/scheduler/:id", handlers.GetTaskDetail)
+	e.GET("/scheduler", handlers.GetTasks)
+	e.DELETE("/scheduler/:id", handlers.CancelTask)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":4040"))

@@ -18,7 +18,7 @@ type ExecutionRequest struct {
 	TargetUrl string                 `json:"targetUrl"`
 	Type      string                 `json:"type"`
 	Body      map[string]interface{} `json:"body"`
-	Header    map[string]interface{} `json:"header"`
+	Header    map[string]interface{} `json:"headers"`
 }
 
 type SchedulerRequest struct {
