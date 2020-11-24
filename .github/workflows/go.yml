@@ -34,7 +34,8 @@ jobs:
       - name: Build
         run: go build -v .
 
-  Build-and-Push-Docker-Image:
+  create-docker-image:
+#    needs: build
     runs-on: ubuntu-latest
     name: Docker Build, Tag, Push
 
@@ -52,6 +53,7 @@ jobs:
           tag_with_sha: true
 
   Deployment:
+#    needs: create-docker-image
     runs-on: ubuntu-latest
     name: Deployment
 
