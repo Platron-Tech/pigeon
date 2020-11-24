@@ -60,6 +60,11 @@ jobs:
 
       - name: Executing remote  command
         uses: appleboy/ssh-action@master
+        with:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSH }}
 
       - name: Setting variables
         env:
