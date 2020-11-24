@@ -34,9 +34,6 @@ jobs:
     - name: Build
       run: go build -v .
 
-    - name: Docker image
-      run: docker build -t pigeon .
-
   Build-and-Push-Docker-Image:
     runs-on: ubuntu-latest
     name: Docker Build, Tag, Push
@@ -53,3 +50,36 @@ jobs:
           registry: docker.pkg.github.com
           repository: platron-tech/pigeon/core
           tag_with_sha: true
+
+  Deployment:
+    runs-on: ubuntu-latest
+    name: Deployment
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Executing remote  command
+        uses: appleboy/ssh-action@master,
+
+      - name: Setting variables
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSH }}
+
+      - name: Add private ssh key
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          mkdir -p ~/.ssh
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-add - <<< "${{ secrets.SSH }}"
+
+      - name: Connect
+        run: |
+          ssh $USERNAME@$HOST
+
+      - name: Test Command
+        run: docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
