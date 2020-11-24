@@ -38,7 +38,10 @@ jobs:
       run: go test -v .
 
     - name: Docker image
-      run: docker build -t pigeon .
+      run: |
+        export DOCKER_BUILDKIT=0
+        export COMPOSE_DOCKER_CLI_BUILD=0
+        docker build -t pigeon .
 
   push_to_registry:
     name: Push Docker image to GitHub Packages
