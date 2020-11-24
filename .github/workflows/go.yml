@@ -71,4 +71,4 @@ jobs:
         with:
           push: true
           # tags: <org-name>/<repo-name>/<app-name>:${{ env.IMAGE_TAG }}
-          tags: ghcr.io/${{ github.repository_owner }}/core:latest
+          tags: ghcr.io/platron-tech/pigeon/core:latest
