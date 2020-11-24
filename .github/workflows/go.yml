@@ -59,7 +59,7 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Executing remote  command
-        uses: appleboy/ssh-action@master,
+        uses: appleboy/ssh-action@master
 
       - name: Setting variables
         env:
