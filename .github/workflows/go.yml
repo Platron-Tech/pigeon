@@ -54,7 +54,7 @@ jobs:
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
-          registry: ghcr.io
+          registry: ghcr.io/
 
       - name: Build container image
         uses: docker/build-push-action@v2
