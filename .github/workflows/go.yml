@@ -61,21 +61,8 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v1
 
-      - name: Add the private SSH key to the ssh-agent
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        run: |
-          mkdir -p ~/.ssh
-          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          ssh-add - <<< "${{ secrets.SECRET_KEY }}"
-
       - name: Executing remote  command
         uses: appleboy/ssh-action@master
-        env:
-          HOST: ${{ secrets.HOST }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PORT: ${{ secrets.PORT }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -84,9 +71,4 @@ jobs:
           key: ${{ secrets.SECRET_KEY }}
           script: |
             whoami
-
-      - name: Connect, Pull, Deploy
-        run: |
-          ssh -oStrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }}
-#          docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
-#          docker run --name pigeon-scheduler -p 4040:4040 --env-file /root/pigeon/env.list pigeon
+            docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
