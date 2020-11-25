@@ -78,6 +78,6 @@ jobs:
 
       - name: Connect, Pull, Deploy
         run: |
-          ssh -oStrictHostKeyChecking=no $USERNAME@$HOST
+          ssh -oStrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }}
 #          docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
 #          docker run --name pigeon-scheduler -p 4040:4040 --env-file /root/pigeon/env.list pigeon
