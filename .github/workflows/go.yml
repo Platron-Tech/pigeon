@@ -58,7 +58,17 @@ jobs:
     name: Deployment
 
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout master
+        uses: actions/checkout@v1
+
+      - name: Add the private SSH key to the ssh-agent
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          mkdir -p ~/.ssh
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-add - <<< "${{ secrets.SSHKEY }}"
 
       - name: Executing remote  command
         uses: appleboy/ssh-action@master
@@ -69,24 +79,17 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           script: |
             whoami
-            ls -al
 
       - name: Setting variables
         env:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
           PORT: ${{ secrets.PORT }}
-          KEY: ${{ secrets.SSHKEY }}
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        run: |
-          mkdir -p ~/.ssh
-          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          ssh-add - <<< "${{ secrets.SSHKEY }}"
 
       - name: Connect
         run: |
           ssh $USERNAME@$HOST
+          ssh -oStrictHostKeyChecking=no -v $USERNAME@$HOST "/root/pigeon/deploy.sh"
 
-      - name: Test Command
-        run: docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
+#      - name: Test Command
+#        run: docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
