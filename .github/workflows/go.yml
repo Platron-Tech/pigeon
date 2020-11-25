@@ -46,11 +46,11 @@ jobs:
       - name: Build container image
         uses: docker/build-push-action@v1
         with:
-          username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
           repository: platron-tech/pigeon/core
-          tag_with_sha: true
+          tag_with_sha: false
 
   Deployment:
 #    needs: create-docker-image
@@ -71,5 +71,5 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           script: |
             whoami
-            docker login https://docker.pkg.github.com -u ${{github.actor}} --password-stdin
-            docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
+            docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.CR_PAT }}
+#            docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
