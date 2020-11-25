@@ -53,15 +53,16 @@ jobs:
         uses: docker/login-action@v1
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
+          password: ${{ secrets.CR_PAT }}
+          registry: ghcr.io
 
       - name: Build container image
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./Dockerfile
-          push: true
+          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x
+          push: ${{ github.event_name != 'pull_request' && (endsWith(github.ref, github.event.repository.default_branch)) }}
           tags: platron-tech/pigeon/core:latest
 
   Deployment:
