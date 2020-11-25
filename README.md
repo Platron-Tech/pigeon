@@ -1,11 +1,30 @@
 
-# pigeon 
+![Pigeon](img/pigeon.png)
+
+![deploy](https://github.com/Platron-Tech/pigeon/workflows/Go/badge.svg)
+![docker-pull](https://img.shields.io/docker/pulls/netaxtech/pigeon)
+![contributors](https://img.shields.io/github/contributors/platron-tech/pigeon)
+[![go-version](https://img.shields.io/github/go-mod/go-version/Platron-Tech/pigeon.svg)](https://github.com/Platron-Tech/pigeon)
+
+## Run with Docker
+
+Direct pull from Docker Hub :\
+```docker pull netaxtech/pigeon```
+
+## Build with Docker
 
 Docker image build :\
 ```docker build -t pigeon .```
 
 Docker run :\
 ``` docker run --name pigeon-scheduler -p 4040:4040 --env-file ./sample_env.list pigeon```
+
+> Pigeon uses PostgeSQL for database and you have to one database on your machine. \
+> To install PostgreSQL Db your machine 
+> docker image pull \
+> ```docker pull postgres``` \
+> create postgres docker image \
+> ```docker run --name postgres-db -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpass -d postgres```
 
 ### Usage
 
