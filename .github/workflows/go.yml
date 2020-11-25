@@ -49,9 +49,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/386
           push: true
           tags: pigeon/core:latest
 
@@ -74,5 +71,5 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           script: |
             whoami
-            docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.CR_PAT }} --password-stdin
+            docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.CR_PAT }}
 #            docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
