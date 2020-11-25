@@ -50,7 +50,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
           repository: platron-tech/pigeon/core
-          tag_with_sha: false
+          tags: pigeon/core:latest
 
   Deployment:
 #    needs: create-docker-image
@@ -71,5 +71,5 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           script: |
             whoami
-            docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.CR_PAT }}
+            docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.CR_PAT }} --password-stdin
 #            docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
