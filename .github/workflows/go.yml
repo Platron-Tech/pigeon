@@ -68,7 +68,8 @@ jobs:
           username: ${{ secrets.USERNAME }}
           passphrase: ${{ secrets.PASSPHRASE }}
           port: ${{ secrets.PORT }}
-          key: ${{ secrets.SECRET_KEY }}
+          key: ${{ secrets.SSHKEY }}
           script: |
             whoami
+            docker login https://docker.pkg.github.com -u ${{github.actor}} --password-stdin
             docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
