@@ -68,7 +68,7 @@ jobs:
           mkdir -p ~/.ssh
           ssh-agent -a $SSH_AUTH_SOCK > /dev/null
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          ssh-add - <<< "${{ secrets.SSHKEY }}"
+          ssh-add - <<< "${{ secrets.SECRET_KEY }}"
 
       - name: Executing remote  command
         uses: appleboy/ssh-action@master
@@ -81,7 +81,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           passphrase: ${{ secrets.PASSPHRASE }}
           port: ${{ secrets.PORT }}
-          key: ${{ secrets.SSHKEY }}
+          key: ${{ secrets.SECRET_KEY }}
           script: |
             whoami
 
