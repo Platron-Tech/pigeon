@@ -82,4 +82,4 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           script: |
             whoami
-            sh /root/pigeon/deploy.sh
+            bash /root/pigeon/deploy.sh
