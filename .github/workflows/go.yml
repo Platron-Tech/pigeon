@@ -76,10 +76,8 @@ jobs:
           script: |
             whoami
 
-      - name: Connect
+      - name: Connect, Pull, Deploy
         run: |
-          ssh $USERNAME@$HOST
-          ssh -oStrictHostKeyChecking=no -v $USERNAME@$HOST "/root/pigeon/deploy.sh"
-
-#      - name: Test Command
-#        run: docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
+          ssh -oStrictHostKeyChecking=no $USERNAME@$HOST
+#          docker pull docker.pkg.github.com/platron-tech/pigeon/core:sha-a97abf3
+#          docker run --name pigeon-scheduler -p 4040:4040 --env-file /root/pigeon/env.list pigeon
