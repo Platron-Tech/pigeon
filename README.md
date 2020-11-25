@@ -6,12 +6,26 @@
 ![contributors](https://img.shields.io/github/contributors/platron-tech/pigeon)
 [![go-version](https://img.shields.io/github/go-mod/go-version/Platron-Tech/pigeon.svg)](https://github.com/Platron-Tech/pigeon)
 
+## Run directly
+
+Get dependencies :\
+```go build ./...```
+
+Build :\
+```go build .```
+
+Execute :\
+```./pigeon```
+
+> At execution step you can get db.Connect(). This cause of necessary environment variables. \
+> To pure execution, you should add environment variables in the `sample_enc.list` to your machine with your custom settings
+
 ## Run with Docker
 
 Direct pull from Docker Hub :\
 ```docker pull netaxtech/pigeon```
 
-## Build with Docker
+## Build Docker Image
 
 Docker image build :\
 ```docker build -t pigeon .```
