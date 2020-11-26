@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/lib/pq"
+	"os"
 	"pigeon/db"
 	"pigeon/pkg/handlers"
 )
@@ -21,10 +22,19 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
+	e.Use(middleware.Secure())
 
 	//e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 	//	Format: "method=${method}, uri=${uri}, status=${status}\n",
 	//}))
+
+	e.Use(middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
+		KeyLookup: "header:api-key",
+		Validator: func(key string, c echo.Context) (bool, error) {
+			// todo this is a temporary solution. NEED TO FIX!!!
+			return key == os.Getenv("API_KEY"), nil
+		},
+	}))
 
 	// Routes
 	e.POST("/scheduler", handlers.AttachNewTask)

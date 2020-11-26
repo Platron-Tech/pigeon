@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	. "pigeon/model"
 	"strconv"
 	"time"
@@ -110,7 +109,6 @@ func GetActives() (response []TaskSummary) {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(summary)
 
 		response = append(response, summary)
 	}

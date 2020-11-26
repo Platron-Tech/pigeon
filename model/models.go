@@ -54,7 +54,7 @@ type TaskSummary struct {
 }
 
 type TaskCreatedResponse struct {
-	TaskId string
+	TaskId string `json:"taskId"`
 }
 
 func (date SchedulerStart) ConvertToTime() time.Time {

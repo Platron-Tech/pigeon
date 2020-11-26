@@ -5,6 +5,14 @@ import (
 	"os"
 )
 
+// if you run locally and does not have environment variables on your machine comment out this block
+//func init() {
+//	err := gotenv.Load(".env.sample")
+//	if err != nil {
+//		panic(err)
+//	}
+//}
+
 func getSqlInfo() string {
 	dbname := os.Getenv("POSTGRES_DB")
 	user := os.Getenv("POSTGRES_DB_USER")
