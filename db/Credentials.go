@@ -23,3 +23,7 @@ func getSqlInfo() string {
 	return fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
 		user, password, host, port, dbname)
 }
+
+func GetApiKey() string {
+	return os.Getenv("API_KEY")
+}

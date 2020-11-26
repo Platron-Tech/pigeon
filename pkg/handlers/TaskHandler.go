@@ -11,6 +11,7 @@ import (
 	. "pigeon/model"
 	. "pigeon/pkg/executors"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -31,11 +32,12 @@ func AttachNewTask(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, response)
 }
 
+//todo add request validator
 func attach(req SchedulerRequest) (response TaskCreatedResponse, err error) {
 	taskId := guuid.New().String()
 
 	_, err = prepareTask("NEW", taskId, req.Interval, req.IntervalType, req.SendAt, req.Immediately,
-		req.Continuous, req.Limit, 0, req.StartAt.ConvertToTime(), req.Execution)
+		req.Continuous, req.Limit, 0, time.Now(), req.Execution)
 
 	db.Save(taskId, req)
 
@@ -76,8 +78,7 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 	_interval := uint64(interval)
 
 	if strings.EqualFold(exec.TargetUrl, "") {
-		return nil,  errors.New("Target URL does not be empty")
-
+		return nil, errors.New("Target URL does not be empty")
 	}
 
 	if !strings.Contains(exec.TargetUrl, "http") {
@@ -94,6 +95,12 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 	// starts job when scheduler app restarted, so we need check this situation
 	if taskType == "NEW" && immediately {
 		s.StartImmediately()
+	}
+
+	if sendAt == "" {
+		hour := strconv.Itoa(time.Now().Hour())
+		minute := strconv.Itoa(time.Now().Minute())
+		sendAt = hour + ":" + minute
 	}
 
 	switch intervalType {
@@ -122,13 +129,19 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 	case "GET":
 		do, err := s.Do(GetRequest, taskId, exec.TargetUrl, exec.Header)
 		if err != nil {
-			return nil, errors.New("An error occurred while request")
+			return nil, errors.New("An error occurred while request [GET]")
 		}
 		return do, err
 	case "POST":
 		do, err := s.Do(PostRequest, taskId, exec.TargetUrl, exec.Body, exec.Header)
 		if err != nil {
-			return nil, errors.New("An error occurred while request")
+			return nil, errors.New("An error occurred while request [POST]")
+		}
+		return do, err
+	case "PATCH":
+		do, err := s.Do(PatchRequest, taskId, exec.TargetUrl, exec.Body, exec.Header)
+		if err != nil {
+			return nil, errors.New("An error occurred while request [PATCH]")
 		}
 		return do, err
 	}

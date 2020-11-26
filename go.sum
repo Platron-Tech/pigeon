@@ -1,5 +1,7 @@
 github.com/bozd4g/go-http-client v0.1.1 h1:U8emHhYho+e2MXeNBBciSceRbrhqRLKvngZHgG7i7YU=
 github.com/bozd4g/go-http-client v0.1.1/go.mod h1:mIhwdjcRu9HwfNIXoWYJ+AmnPRUIOHyZOkB/bPe16SY=
+github.com/bozd4g/go-http-client v0.1.2 h1:6gm4fZ9qf04g/f1UwMfq+tDEyIX1G6q5vfq0mMqsHnE=
+github.com/bozd4g/go-http-client v0.1.2/go.mod h1:mIhwdjcRu9HwfNIXoWYJ+AmnPRUIOHyZOkB/bPe16SY=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=

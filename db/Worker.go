@@ -29,9 +29,9 @@ func Save(taskId string, req SchedulerRequest) {
 	}
 
 	startAt := time.Now()
-	if req.StartAt != (SchedulerStart{}) {
-		startAt = req.StartAt.ConvertToTime()
-	}
+	//if req.StartAt != (SchedulerStart{}) { //todo fix later
+	//	startAt = req.StartAt.ConvertToTime()
+	//}
 
 	saveQuery := "INSERT INTO tasks(uuid, start_at, target_url, interval_time, interval_type, send_at, exec_type, exec_body, exec_header, exec_limit, immediately, continuous, cancelled, fire_count) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)"
 	_, err = db.Exec(saveQuery, taskId, startAt, req.Execution.TargetUrl, req.Interval, req.IntervalType, req.SendAt, req.Execution.Type, ebs, hs, req.Limit, req.Immediately, req.Continuous, false, 0)

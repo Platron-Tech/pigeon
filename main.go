@@ -6,7 +6,6 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/lib/pq"
-	"os"
 	"pigeon/db"
 	"pigeon/pkg/handlers"
 )
@@ -32,7 +31,7 @@ func main() {
 		KeyLookup: "header:api-key",
 		Validator: func(key string, c echo.Context) (bool, error) {
 			// todo this is a temporary solution. NEED TO FIX!!!
-			return key == os.Getenv("API_KEY"), nil
+			return key == db.GetApiKey(), nil
 		},
 	}))
 
