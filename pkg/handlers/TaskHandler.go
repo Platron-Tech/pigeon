@@ -99,8 +99,13 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 
 	if sendAt == "" {
 		hour := strconv.Itoa(time.Now().Hour())
-		minute := strconv.Itoa(time.Now().Minute())
-		sendAt = hour + ":" + minute
+
+		minute := time.Now().Minute()
+		if minute < 10 {
+			sendAt = hour + ":" + "0" + strconv.Itoa(minute)
+		} else {
+			sendAt = hour + ":" + strconv.Itoa(time.Now().Minute())
+		}
 	}
 
 	switch intervalType {
