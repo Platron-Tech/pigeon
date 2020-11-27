@@ -24,8 +24,13 @@ func Save(taskId string, req SchedulerRequest) {
 
 	if req.SendAt == "" {
 		hour := strconv.Itoa(time.Now().Hour())
-		minute := strconv.Itoa(time.Now().Minute())
-		req.SendAt = hour + ":" + minute
+
+		minute := time.Now().Minute()
+		if minute < 10 {
+			req.SendAt = hour + ":" + "0" + strconv.Itoa(minute)
+		} else {
+			req.SendAt = hour + ":" + strconv.Itoa(time.Now().Minute())
+		}
 	}
 
 	startAt := time.Now()
