@@ -165,7 +165,7 @@ func unrecognizedExecutionType() {
 
 func RestartExistsJobs(jobs []TaskDetail) {
 	for _, job := range jobs {
-		if job.Continuous || (job.Limit-job.FireCount > 0) {
+		if job.Continuous || (job.Limit-job.SuccessfulFireCount > 0) {
 			prepareTask("LEGACY", job.TaskId.String(), job.Interval, job.IntervalType, job.SendAt, job.Immediately,
 				job.Continuous, job.Limit, job.FireCount, job.StartAt, job.Execution)
 		}

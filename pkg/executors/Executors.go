@@ -64,6 +64,7 @@ func doRequest(taskId string, httpClient client.IHttpClient, req *http.Request) 
 			db.IncreaseFireCount(taskId)
 		} else {
 			fmt.Println(resp.Error)
+			db.UpdateLastFire(taskId)
 		}
 	}
 }

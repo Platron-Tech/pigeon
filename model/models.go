@@ -33,18 +33,21 @@ type SchedulerRequest struct {
 }
 
 type TaskDetail struct {
-	Id           int64
-	TaskId       guuid.UUID
-	Interval     int
-	IntervalType string
-	SendAt       string
-	StartAt      time.Time
-	Execution    ExecutionRequest
-	Limit        int
-	Immediately  bool
-	Continuous   bool
-	Cancelled    bool
-	FireCount    int
+	Id                  int64
+	TaskId              guuid.UUID
+	Interval            int
+	IntervalType        string
+	SendAt              string
+	StartAt             time.Time
+	Execution           ExecutionRequest
+	Limit               int
+	Immediately         bool
+	Continuous          bool
+	Cancelled           bool
+	FireCount           int
+	SuccessfulFireCount int
+	LastFire            time.Time
+	LastSuccessfulFire  time.Time
 }
 
 type TaskSummary struct {
