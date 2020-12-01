@@ -1,18 +1,29 @@
 package main
 
 import (
+	"context"
 	_ "context"
 	_ "database/sql"
+	"fmt"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+	"net"
 	"pigeon/db"
 	"pigeon/pkg/handlers"
+	pb "pigeon/proto"
 )
 
 func main() {
 	db.Connect()
 	handlers.RestartExistsJobs(db.GetDetailedJobs())
+
+	// Start GRpc Server
+	//todo this maybe inefficient
+	go startGRpcServer()
 
 	// Echo instance
 	e := echo.New()
@@ -43,4 +54,30 @@ func main() {
 
 	// Start server
 	e.Logger.Fatal(e.Start(":4040"))
+}
+
+func startGRpcServer() {
+	fmt.Println("grpc starting...")
+	listen, err := net.Listen("tcp", "localhost:6566")
+	if err != nil {
+		log.Printf("Failed to listen: %v", err)
+	}
+
+	var opts []grpc.ServerOption
+	server := grpc.NewServer(opts...)
+	reflection.Register(server)
+	pb.RegisterNotificationServiceServer(server, &svc{})
+	log.Printf("starting grpc server")
+	err = server.Serve(listen)
+	log.Fatal(err)
+}
+
+func (s *svc) ScheduleNotification(ctx context.Context, req *pb.ScheduleNotificationRequest) (*pb.ScheduleNotificationResponse, error) {
+	log.Printf("received : %v - %v", req.NotificationId, req.SendAt)
+	handlers.QneTimeScheduledNotification(req.NotificationId, req.SendAt)
+	return &pb.ScheduleNotificationResponse{Done: true}, nil
+}
+
+type svc struct {
+	pb.UnimplementedNotificationServiceServer
 }

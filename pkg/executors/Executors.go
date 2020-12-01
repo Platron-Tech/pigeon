@@ -1,10 +1,14 @@
 package executors
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	client "github.com/bozd4g/go-http-client"
+	"google.golang.org/grpc"
 	"net/http"
 	"pigeon/db"
+	pb "pigeon/proto"
 	"time"
 )
 
@@ -67,4 +71,29 @@ func doRequest(taskId string, httpClient client.IHttpClient, req *http.Request) 
 			db.UpdateLastFire(taskId)
 		}
 	}
+}
+
+func TriggerScheduledNotification(executionBody map[string]interface{}) {
+	body, _ := json.Marshal(executionBody)
+	req := pb.TriggerNotificationRequest{}
+	json.Unmarshal(body, &req)
+
+	conn, err := grpc.Dial("localhost:6565", grpc.WithInsecure())
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer conn.Close()
+
+	client := pb.NewNotificationServiceClient(conn)
+	request := &pb.TriggerNotificationRequest{NotificationId: req.NotificationId}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	response, err := client.TriggerNotification(ctx, request)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Response:", response.Done)
 }
