@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"log"
 	"net"
 	"pigeon/db"
 	"pigeon/pkg/handlers"
@@ -57,8 +57,8 @@ func main() {
 }
 
 func startGRpcServer() {
-	fmt.Println("grpc starting...")
-	listen, err := net.Listen("tcp", "localhost:6566")
+	fmt.Println("⇨ gRPC server started on [::]:6566")
+	listen, err := net.Listen("tcp", db.GetMyGrpcServer())
 	if err != nil {
 		log.Printf("Failed to listen: %v", err)
 	}
@@ -67,13 +67,11 @@ func startGRpcServer() {
 	server := grpc.NewServer(opts...)
 	reflection.Register(server)
 	pb.RegisterNotificationServiceServer(server, &svc{})
-	log.Printf("starting grpc server")
 	err = server.Serve(listen)
 	log.Fatal(err)
 }
 
 func (s *svc) ScheduleNotification(ctx context.Context, req *pb.ScheduleNotificationRequest) (*pb.ScheduleNotificationResponse, error) {
-	log.Printf("received : %v - %v", req.NotificationId, req.SendAt)
 	handlers.QneTimeScheduledNotification(req.NotificationId, req.SendAt)
 	return &pb.ScheduleNotificationResponse{Done: true}, nil
 }

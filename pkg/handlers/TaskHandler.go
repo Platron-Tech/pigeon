@@ -152,7 +152,7 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 		}
 		return do, err
 	case "GRPC":
-		do, err := s.Do(TriggerScheduledNotification, exec.Body)
+		do, err := s.Do(TriggerScheduledNotification, taskId, exec.Body)
 		if err != nil {
 			return nil, errors.New("An error occurred while request [GRPC]")
 		}

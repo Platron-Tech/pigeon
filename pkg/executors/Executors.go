@@ -73,12 +73,12 @@ func doRequest(taskId string, httpClient client.IHttpClient, req *http.Request) 
 	}
 }
 
-func TriggerScheduledNotification(executionBody map[string]interface{}) {
+func TriggerScheduledNotification(taskId string, executionBody map[string]interface{}) {
 	body, _ := json.Marshal(executionBody)
 	req := pb.TriggerNotificationRequest{}
 	json.Unmarshal(body, &req)
 
-	conn, err := grpc.Dial("localhost:6565", grpc.WithInsecure())
+	conn, err := grpc.Dial(db.GetTargetGrpcServer(), grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -92,8 +92,10 @@ func TriggerScheduledNotification(executionBody map[string]interface{}) {
 
 	response, err := client.TriggerNotification(ctx, request)
 	if err != nil {
+		db.UpdateLastFire(taskId)
 		fmt.Println(err)
 	}
 
+	db.IncreaseFireCount(taskId)
 	fmt.Println("Response:", response.Done)
 }

@@ -27,3 +27,11 @@ func getSqlInfo() string {
 func GetApiKey() string {
 	return os.Getenv("API_KEY")
 }
+
+func GetTargetGrpcServer() string {
+	return os.Getenv("TARGET_GRPC_SERVER")
+}
+
+func GetMyGrpcServer() string {
+	return os.Getenv("MY_GRPC_SERVER")
+}
