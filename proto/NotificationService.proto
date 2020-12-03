@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "pb";
+
+message ScheduleNotificationRequest {
+  string notificationId = 1;
+  string sendAt = 2;
+}
+
+message ScheduleNotificationResponse {
+  bool done = 1;
+}
+
+message TriggerNotificationRequest {
+  string notificationId = 1;
+}
+
+message TriggerNotificationResponse {
+  bool done = 1;
+}
+
+service NotificationService {
+  rpc ScheduleNotification(ScheduleNotificationRequest) returns (ScheduleNotificationResponse);
+  rpc TriggerNotification(TriggerNotificationRequest) returns (TriggerNotificationResponse);
+}

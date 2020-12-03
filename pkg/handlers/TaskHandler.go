@@ -34,6 +34,7 @@ func AttachNewTask(c echo.Context) (err error) {
 
 //todo add request validator
 func attach(req SchedulerRequest) (response TaskCreatedResponse, err error) {
+	fmt.Println("attach")
 	taskId := guuid.New().String()
 
 	_, err = prepareTask("NEW", taskId, req.Interval, req.IntervalType, req.SendAt, req.Immediately,
@@ -97,6 +98,7 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 		s.StartImmediately()
 	}
 
+	//todo timezone
 	if sendAt == "" {
 		hour := strconv.Itoa(time.Now().Hour())
 
@@ -149,6 +151,12 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 			return nil, errors.New("An error occurred while request [PATCH]")
 		}
 		return do, err
+	case "GRPC":
+		do, err := s.Do(TriggerScheduledNotification, taskId, exec.Body)
+		if err != nil {
+			return nil, errors.New("An error occurred while request [GRPC]")
+		}
+		return do, err
 	}
 
 	do, err := s.Do(unrecognizedExecutionType)
@@ -157,6 +165,27 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 		return nil, errors.New("Task execution type can not recognize")
 	}
 	return do, err
+}
+
+func QneTimeScheduledNotification(notificationId string, sendAt string) {
+	preparedRequest := SchedulerRequest{
+		Continuous:   false,
+		Immediately:  false,
+		Interval:     1,
+		IntervalType: "DAILY",
+		SendAt:       sendAt,
+		Limit:        1,
+		Execution: ExecutionRequest{
+			TargetUrl: "http://",
+			Type:      "GRPC",
+			Body: map[string]interface{}{
+				"notificationId": notificationId,
+			},
+			Header: map[string]interface{}{},
+		},
+	}
+
+	attach(preparedRequest)
 }
 
 func unrecognizedExecutionType() {
