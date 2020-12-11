@@ -23,7 +23,7 @@ func main() {
 
 	// Start GRpc Server
 	//todo this maybe inefficient
-	go startGRpcServer()
+	//go startGRpcServer()
 
 	// Echo instance
 	e := echo.New()
