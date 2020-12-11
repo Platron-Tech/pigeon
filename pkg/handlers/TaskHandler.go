@@ -40,6 +40,9 @@ func attach(req SchedulerRequest) (response TaskCreatedResponse, err error) {
 
 	_, err = prepareTask("NEW", taskId, req.Interval, req.IntervalType, req.SendAt, req.Immediately,
 		req.Continuous, req.Limit, 0, time.Now(), req.Execution)
+	if err != nil {
+		log.Println(err)
+	}
 
 	db.Save(taskId, req)
 
