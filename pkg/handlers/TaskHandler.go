@@ -136,6 +136,7 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 		}
 	}
 
+	log.Printf("[%v] prepared for schedule", taskId)
 	switch exec.Type {
 	case "GET":
 		do, err := s.Do(GetRequest, taskId, exec.TargetUrl, exec.Header)
@@ -155,12 +156,12 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 			return nil, errors.New("An error occurred while request [PATCH]")
 		}
 		return do, err
-	case "GRPC":
-		do, err := s.Do(TriggerScheduledNotification, taskId, exec.Body)
-		if err != nil {
-			return nil, errors.New("An error occurred while request [GRPC]")
-		}
-		return do, err
+	//case "GRPC":
+	//	do, err := s.Do(TriggerScheduledNotification, taskId, exec.Body)
+	//	if err != nil {
+	//		return nil, errors.New("An error occurred while request [GRPC]")
+	//	}
+	//	return do, err
 	}
 
 	do, err := s.Do(unrecognizedExecutionType)

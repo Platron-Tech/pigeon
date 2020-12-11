@@ -6,6 +6,7 @@ import (
 	"fmt"
 	client "github.com/bozd4g/go-http-client"
 	"google.golang.org/grpc"
+	"log"
 	"net/http"
 	"pigeon/db"
 	pb "pigeon/proto"
@@ -13,6 +14,8 @@ import (
 )
 
 func GetRequest(taskId string, url string, header map[string]interface{}) {
+	log.Printf("[GET] executed for %v", taskId)
+
 	httpClient := client.New(url)
 	req, err := httpClient.Get("")
 
@@ -29,6 +32,8 @@ func GetRequest(taskId string, url string, header map[string]interface{}) {
 }
 
 func PostRequest(taskId string, url string, body map[string]interface{}, header map[string]interface{}) {
+	log.Printf("[POST] executed for %v", taskId)
+
 	httpClient := client.New(url)
 	req, err := httpClient.PostWith("", body)
 
@@ -45,6 +50,8 @@ func PostRequest(taskId string, url string, body map[string]interface{}, header 
 }
 
 func PatchRequest(taskId string, url string, body map[string]interface{}, header map[string]interface{}) {
+	log.Printf("[PATCH] executed for %v", taskId)
+
 	httpClient := client.New(url)
 	req, err := httpClient.PatchWith("", body)
 
