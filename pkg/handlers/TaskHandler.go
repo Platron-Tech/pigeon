@@ -6,6 +6,7 @@ import (
 	"github.com/go-co-op/gocron"
 	guuid "github.com/google/uuid"
 	"github.com/labstack/echo"
+	"log"
 	"net/http"
 	"pigeon/db"
 	. "pigeon/model"
@@ -195,6 +196,7 @@ func unrecognizedExecutionType() {
 func RestartExistsJobs(jobs []TaskDetail) {
 	for _, job := range jobs {
 		if job.Continuous || (job.Limit-job.SuccessfulFireCount > 0) {
+			log.Printf("[%v] will execute", job.TaskId.String())
 			prepareTask("LEGACY", job.TaskId.String(), job.Interval, job.IntervalType, job.SendAt, job.Immediately,
 				job.Continuous, job.Limit, job.FireCount, job.StartAt, job.Execution)
 		}
