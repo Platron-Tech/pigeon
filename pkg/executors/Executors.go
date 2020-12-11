@@ -81,6 +81,8 @@ func doRequest(taskId string, httpClient client.IHttpClient, req *http.Request) 
 }
 
 func TriggerScheduledNotification(taskId string, executionBody map[string]interface{}) {
+	log.Printf("[GRPC] executed for %v", taskId)
+
 	body, _ := json.Marshal(executionBody)
 	req := pb.TriggerNotificationRequest{}
 	json.Unmarshal(body, &req)
