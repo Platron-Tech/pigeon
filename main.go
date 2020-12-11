@@ -53,7 +53,7 @@ func main() {
 	e.DELETE("/scheduler/:id", handlers.CancelTask)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":4040"))
+	e.Logger.Fatal(e.StartAutoTLS(":4040"))
 }
 
 func startGRpcServer() {
