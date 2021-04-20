@@ -150,6 +150,12 @@ func prepareTask(taskType string, taskId string, interval int, intervalType stri
 			return nil, errors.New("An error occurred while request [POST]")
 		}
 		return do, err
+	case "PUT":
+		do, err := s.Do(PutRequest, taskId, exec.TargetUrl, exec.Body, exec.Header)
+		if err != nil {
+			return nil, errors.New("An error occurred while request [POST]")
+		}
+		return do, err
 	case "PATCH":
 		do, err := s.Do(PatchRequest, taskId, exec.TargetUrl, exec.Body, exec.Header)
 		if err != nil {

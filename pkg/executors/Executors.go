@@ -49,6 +49,24 @@ func PostRequest(taskId string, url string, body map[string]interface{}, header 
 	doRequest(taskId, httpClient, req)
 }
 
+func PutRequest(taskId string, url string, body map[string]interface{}, header map[string]interface{}) {
+	log.Printf("[PUT] executed for %v", taskId)
+
+	httpClient := client.New(url)
+	req, err := httpClient.PutWith("", body)
+
+	for i, h := range header {
+		hv := fmt.Sprintf("%v", h)
+		req.Header.Add(i, hv)
+	}
+
+	if err != nil {
+		println(err)
+	}
+
+	doRequest(taskId, httpClient, req)
+}
+
 func PatchRequest(taskId string, url string, body map[string]interface{}, header map[string]interface{}) {
 	log.Printf("[PATCH] executed for %v", taskId)
 
